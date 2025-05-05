@@ -1,3 +1,11 @@
+/**
+ * Lab1_QueueList_Lib_Semeniuk.h
+ * Submission by Nikita Semeniuk ID: 2722726
+ * Singly linked list queue implementation for student records
+ * 
+ * Date 2025-05-01
+
+ */
 #pragma once
 
 #define _CRT_SECURE_NO_WARNINGS

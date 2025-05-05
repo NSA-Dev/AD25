@@ -1,3 +1,11 @@
+/**
+ * Lab1_QueueArray_main_Semeniuk.c
+ * Submission by Nikita Semeniuk ID: 2722726
+ * Array queue implementation for student records
+ * 
+ * Date 2025-05-01
+
+ */
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
