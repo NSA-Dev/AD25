@@ -12,9 +12,9 @@ int main(void) {
         shuffleK(array, 5);
         printArray(array);
          
-        selectionSort(array, MAX_SIZE);
+        shellSort(array, MAX_SIZE);
         printArray(array);
 
 
-        return 0;
-    } 
+            return 0;
+        } 

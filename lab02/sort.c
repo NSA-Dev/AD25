@@ -7,6 +7,14 @@ void swap(int* a, int* b) {
     *b = temp;
     return; 
 }
+
+void copyArray(int a[], int b[], int len) {
+    for(int i = 0; i < len; i++) {
+        b[i] = a[i];
+    }
+
+    return; 
+}
 void insertionSort(int a[], int len) {
     // start at 1
     // compare with elem to the left
@@ -36,7 +44,28 @@ void selectionSort(int a[], int len) {
             if(a[i] < a[min]) min = i; // update min index
         }
         
-        if(min != low) swap(&a[low], &a[min]); // ideally I would add a check
+        if(min != low) swap(&a[low], &a[min]); 
         low++; 
     }
+}
+
+
+
+void shellSort(int a[], int len) {
+    int compared;
+
+    for(int gap = len/2; gap > 0; gap /= 2) {
+        for(int i = gap; i < len; i++) {
+            compared = a[i];
+            int j;
+            for(j = i; j >= gap && a[j - gap] > compared; j -= gap) {
+                a[j] = a[j-gap];
+            }
+            a[j] = compared;   
+        } 
+    }
+}
+
+void mergeSort(int a[], int len) {
+    
 }

@@ -1,9 +1,13 @@
 #ifndef SORT_H
 #define SORT_H
 
-
-void insertionSort(int a[], int len); // asscending 
+/* ascending sorts */
+void insertionSort(int a[], int len);  
 void selectionSort(int a[], int len);
-void swap(int* a, int* b); 
+void shellSort(int a[], int len);
+void mergeSort(int a[], int len); 
 
+/* helper functions */
+void swap(int* a, int* b); 
+void copyArray(int a[], int b[], len) // array length must match
 #endif
