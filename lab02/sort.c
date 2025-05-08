@@ -67,5 +67,58 @@ void shellSort(int a[], int len) {
 }
 
 void mergeSort(int a[], int len) {
+    mergeSort_recursion(a, 0, len - 1); // have to offset (not inclusive interval) 
+    return; 
+}
+
+void mergeSort_recursion(int a[], int l, int r) {
+    /*Find middle return if we are out of bounds*/
+    if(l >= r) return; 
+    int m = l + (r - l) / 2;
+
+    /* Recursively sort left and right side */
+    mergeSort_recursion(a, l, m); // sort left side
+    mergeSort_recursion(a, m + 1, r); // sort  right side
     
+    /* select from two sorted parts and coppy to provided array */
+    mergeSortedArrays(a, l, m, r); 
+
+    return;
+}
+
+void mergeSortedArrays(int a[], int l, int m, int r) {
+    /* Calculate indices */
+    int leftLen = m - l + 1;
+    int rightLen = r - m;
+
+    /*Declare subsections and their indices */
+    int tempLeft[leftLen];
+    int tempRight[rightLen];
+    
+
+    /* Copy subsections */
+    for(int i = 0; i < leftLen; i++) {
+        tempLeft[i] = a[l + i];
+    }
+
+    for(int i = 0; i < rightLen; i++) {
+        tempRight[i] = a[m + 1 + i];
+    }
+
+    /* Compare and copy into the original check for bounds in the if */
+    int i, j, k; // declare indices for a[], tempLeft, tempRight 
+    i = j = 0; // a[] & j index to 0 for now
+    
+    for( k = l; k <= r; k++) {
+        if((i < leftLen) && 
+                (j >= rightLen || tempLeft[i] <= tempRight[j])) {
+            a[k] = tempLeft[i];
+            i++; 
+        } else {
+            a[k] = tempRight[j];
+            j++; 
+        }
+    }
+
+    return;
 }
