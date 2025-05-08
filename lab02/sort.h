@@ -8,7 +8,8 @@ void shellSort(int a[], int len);
 void mergeSort(int a[], int len);
 void mergeSort_recursion(int a[], int l, int r);
 void mergeSortedArrays(int a[], int l, int m, int r);
-
+int partition(int* array, int low, int high);
+void quickSort(int* array, int low, int high); 
 /* helper functions */
 void swap(int* a, int* b); 
 void copyArray(int a[], int b[], int len); // array length must match 

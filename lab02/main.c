@@ -12,7 +12,7 @@ int main(void) {
         shuffleK(array, 5);
         printArray(array);
          
-        mergeSort(array, MAX_SIZE);
+        quickSort(array, 0, MAX_SIZE - 1);
         printArray(array);
 
 
