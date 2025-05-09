@@ -1,6 +1,10 @@
 #ifndef SORT_H
 #define SORT_H
 
+
+extern unsigned long int exchangeCount;
+extern unsigned long int compareCount;
+
 /* ascending sorts */
 void insertionSort(int a[], int len);  
 void selectionSort(int a[], int len);

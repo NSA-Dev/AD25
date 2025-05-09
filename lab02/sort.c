@@ -15,7 +15,7 @@ void copyArray(int a[], int b[], int len) {
 
     return; 
 }
-void insertionSort(int a[], int len) {
+void insertionSort(int a[], int len) {  
     // start at 1
     // compare with elem to the left
     // shift
@@ -27,31 +27,38 @@ void insertionSort(int a[], int len) {
         // while element to the left is larger shift it right
         while(j >  0 && a[j-1] > compared) {
             a[j] = a[j-1];
-            j--;  
+            j--;
+            compareCount++;
+            exchangeCount++;   
         }
         a[j] = compared;
+        exchangeCount++;
     }   
 }
 
-void selectionSort(int a[], int len) {
-   
+void selectionSort(int a[], int len) { 
+
     int min = 0;
     int low = 0; 
 
-    while(low != len - 1) {
+    while(low != len - 1) { 
         min = low;
         for(int i = low; i < len; i++) {
             if(a[i] < a[min]) min = i; // update min index
+            compareCount++; 
         }
         
-        if(min != low) swap(&a[low], &a[min]); 
+        if(min != low) {
+            swap(&a[low], &a[min]);
+            exchangeCount++; 
+        }    
         low++; 
     }
 }
 
 
 
-void shellSort(int a[], int len) {
+void shellSort(int a[], int len) { 
     int compared;
 
     for(int gap = len/2; gap > 0; gap /= 2) {
@@ -60,8 +67,11 @@ void shellSort(int a[], int len) {
             int j;
             for(j = i; j >= gap && a[j - gap] > compared; j -= gap) {
                 a[j] = a[j-gap];
+                compareCount++;
+                exchangeCount++; 
             }
-            a[j] = compared;   
+            a[j] = compared;
+            exchangeCount++;    
         } 
     }
 }
@@ -131,16 +141,18 @@ int partition(int* array, int low, int high) {
     for(int j = low; j < high; j++) {
         if(array[j] <= pivot) {
             swap(&array[i], &array[j]);
+            exchangeCount++;
+            compareCount++; 
             i++;
         }
     }
 
     swap(&array[i], &array[high]);
+    exchangeCount++; 
 
     return i; 
 } 
-
-
+ 
 void quickSort(int* array, int low, int high) {
     if (low < high) {
         int pivot = partition(array, low, high); 
