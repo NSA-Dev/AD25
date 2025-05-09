@@ -212,7 +212,7 @@ void benchmarkAll(void) {
 	enable_selectionSort = 1;
 	enable_mergeSort = 1;
 	enable_shellSort = 1;
-	enable_mergeSortBU = 0; // debug
+	enable_mergeSortBU = 1; 
 	enable_quickSort = 1; 
 	
 	
@@ -359,8 +359,8 @@ void benchmarkAll(void) {
        "Merge TD", mergeStats.runTime, mergeStats.comparisons, mergeStats.exchanges);
 
 		// Merge Sort (Bottom-Up)
-		//printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",
-       //"Merge BU", mergeStats_bu.runTime, mergeStats_bu.comparisons, mergeStats_bu.exchanges);
+		printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",
+       "Merge BU", mergeStats_bu.runTime, mergeStats_bu.comparisons, mergeStats_bu.exchanges);
 
 		// Quick Sort
 		printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",

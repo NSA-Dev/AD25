@@ -89,7 +89,8 @@ void mergeSort(int a[], int len) {
 
 void mergeSort_recursion(int a[], int l, int r) {
     /*Find middle return if we are out of bounds*/
-    if(l >= r) return; 
+    if(l >= r) return;
+    compareCount++; 
     int m = l + (r - l) / 2;
 
     /* Recursively sort left and right side */
@@ -115,10 +116,14 @@ void mergeSortedArrays(int a[], int l, int m, int r) {
     /* Copy subsections */
     for(int i = 0; i < leftLen; i++) {
         tempLeft[i] = a[l + i];
+        compareCount++;
+        exchangeCount++;
     }
 
     for(int i = 0; i < rightLen; i++) {
         tempRight[i] = a[m + 1 + i];
+        compareCount++;
+        exchangeCount++;
     }
 
     /* Compare and copy into the original check for bounds in the if */
@@ -129,88 +134,112 @@ void mergeSortedArrays(int a[], int l, int m, int r) {
         if((i < leftLen) && 
                 (j >= rightLen || tempLeft[i] <= tempRight[j])) {
             a[k] = tempLeft[i];
-            i++; 
+            i++;
+			compareCount++;
+			exchangeCount++; 
         } else {
             a[k] = tempRight[j];
+			exchangeCount++;
             j++; 
         }
     }
 
     return;
 }
-
-/* Iterative mergesort function to sort arr[0...n-1] */
-void mergesortBU(int array[], int arraySize){
-	// For current size of subarrays to be merged
-	// curr_size varies from 1 to n/2
-	int currSize = 0;
-	// For picking starting index of left subarray
-	// to be merged
-	int leftStart = 0;
-
-	// Merge subarrays in bottom up manner. First merge subarrays of
-	// size 1 to create sorted subarrays of size 2, then merge subarrays
-	// of size 2 to create sorted subarrays of size 4, and so on.
-	for (currSize = 1; currSize <= arraySize - 1; currSize = 2 * currSize){
-		// Pick starting point of different subarrays of current size
-		for (leftStart = 0; leftStart < arraySize - 1; leftStart += 2 * currSize){
-			// Find ending point of left subarray. mid+1 is starting
-			// point of right
-			int mid = minimum(leftStart + currSize - 1, arraySize - 1);
-
-			int right_end = minimum(leftStart + 2 * currSize - 1, arraySize - 1);
-
-			// Merge Subarrays arr[left_start...mid] & arr[mid+1...right_end]
-			mergeBU(array, leftStart, mid, right_end);
-		}
-	}
+void mergeBU(int array[], int l, int m, int r) {
+    int leftSize = m - l + 1;
+    int rightSize = r - m;
+    
+    // Dynamic allocation for temp arrays
+    int *leftPart = malloc(leftSize * sizeof(int));
+    int *rightPart = malloc(rightSize * sizeof(int));
+    
+    if (!leftPart || !rightPart) {
+        fprintf(stderr, "Memory allocation failed in mergeBU\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    /* Copy data to temp arrays */
+    for (int i = 0; i < leftSize; i++)
+        leftPart[i] = array[l + i];
+    for (int j = 0; j < rightSize; j++)
+        rightPart[j] = array[m + 1 + j];
+    
+    /* Merge temp arrays back into array[l..r] */
+    int i = 0, j = 0, k = l;
+    while (i < leftSize && j < rightSize) {
+        compareCount++; // Count comparison
+        if (leftPart[i] <= rightPart[j]) {
+            array[k] = leftPart[i++];
+        } else {
+            array[k] = rightPart[j++];
+            exchangeCount++; // Count exchange
+        }
+        k++;
+    }
+    
+    /* Copy remaining elements */
+    while (i < leftSize) {
+        array[k++] = leftPart[i++];
+        exchangeCount++;
+    }
+    while (j < rightSize) {
+        array[k++] = rightPart[j++];
+        exchangeCount++;
+    }
+    
+    free(leftPart);
+    free(rightPart);
 }
 
-/* Function to merge the two haves arr[l..m] and arr[m+1..r] of array arr[] */
-void mergeBU(int array[], int l, int m, int r){
-	int i = 0, j = 0, k = 0;
-	int leftSize = m - l + 1;
-	int rightSize = r - m;
-
-	/* create temp arrays */
-	int leftPart[TEMP_SIZE] = { 0 }, rightPart[TEMP_SIZE] = { 0 };
-
-	/* Copy data to temp arrays L[] and R[] */
-	for (i = 0; i < leftSize; i++)
-		leftPart[i] = array[l + i];
-	for (j = 0; j < rightSize; j++)
-		rightPart[j] = array[m + 1 + j];
-
-	/* Merge the temp arrays back into arr[l..r]*/
-	i = 0;
-	j = 0;
-	k = l;
-	while (i < leftSize && j < rightSize){
-		if (leftPart[i] <= rightPart[j]){
-			array[k] = leftPart[i];
-			i++;
-		}
-		else{
-			array[k] = rightPart[j];
-			j++;
-		}
-		k++;
-	}
-
-	/* Copy the remaining elements of L[], if there are any */
-	while (i < leftSize){
-		array[k] = leftPart[i];
-		i++;
-		k++;
-	}
-
-	/* Copy the remaining elements of R[], if there are any */
-	while (j < rightSize){
-		array[k] = rightPart[j];
-		j++;
-		k++;
-	}
+void mergesortBU(int array[], int arraySize) {
+    // Allocate a single temp array once
+    int *temp = malloc(arraySize * sizeof(int));
+    if (!temp) {
+        fprintf(stderr, "Memory allocation failed in mergesortBU\n");
+        return;
+    }
+    
+    for (int currSize = 1; currSize < arraySize; currSize *= 2) {
+        for (int leftStart = 0; leftStart < arraySize - 1; leftStart += 2 * currSize) {
+            int mid = minimum(leftStart + currSize - 1, arraySize - 1);
+            int rightEnd = minimum(leftStart + 2 * currSize - 1, arraySize - 1);
+            
+            // Use the pre-allocated temp array
+            int i = leftStart, j = mid + 1, k = 0;
+            
+            // Merge two subarrays into temp
+            while (i <= mid && j <= rightEnd) {
+                compareCount++;
+                if (array[i] <= array[j]) {
+                    temp[k++] = array[i++];
+                } else {
+                    temp[k++] = array[j++];
+                    exchangeCount++;
+                }
+            }
+            
+            // Copy remaining elements
+            while (i <= mid) {
+                temp[k++] = array[i++];
+                exchangeCount++;
+            }
+            while (j <= rightEnd) {
+                temp[k++] = array[j++];
+                exchangeCount++;
+            }
+            
+            // Copy back from temp to original array
+            for (i = leftStart, k = 0; i <= rightEnd; i++, k++) {
+                array[i] = temp[k];
+                exchangeCount++;
+            }
+        }
+    }
+    
+    free(temp);
 }
+
 
 
 
@@ -240,4 +269,48 @@ void quickSort(int* array, int low, int high) {
         quickSort(array, low, pivot - 1);
         quickSort(array, pivot + 1, high);
     } 
+}
+
+void bubbleSort(int arr[], int n) {
+    int swapped;
+    do {
+        swapped = 0;
+        for (int i = 0; i < n-1; i++) {
+            compareCount++;
+            if (arr[i] > arr[i+1]) {
+                // Swap elements
+                int temp = arr[i];
+                arr[i] = arr[i+1];
+                arr[i+1] = temp;
+                exchangeCount++;
+                swapped = 1;
+            }
+        }
+        n--; // Optimization - largest element bubbles to end
+    } while (swapped);
+}
+
+void combSort(int arr[], int n) {
+    int gap = n;
+    float shrink = 1.3;
+    int swapped;
+
+    do {
+        // Update gap size
+        gap = (int)(gap / shrink);
+        if (gap < 1) gap = 1;
+
+        swapped = 0;
+        for (int i = 0; i + gap < n; i++) {
+            compareCount++;
+            if (arr[i] > arr[i+gap]) {
+                // Swap elements
+                int temp = arr[i];
+                arr[i] = arr[i+gap];
+                arr[i+gap] = temp;
+                exchangeCount++;
+                swapped = 1;
+            }
+        }
+    } while (gap > 1 || swapped);
 }

@@ -1,6 +1,8 @@
 #ifndef SORT_H
 #define SORT_H
-#define TEMP_SIZE 12
+
+#include <stdlib.h>
+#include <stdio.h>
 
 extern unsigned long int exchangeCount;
 extern unsigned long int compareCount;
@@ -15,7 +17,9 @@ void mergeSortedArrays(int a[], int l, int m, int r);
 int partition(int* array, int low, int high);
 void quickSort(int* array, int low, int high);
 void mergesortBU(int array[], int arraySize);
-void mergeBU(int array[], int l, int m, int r); 
+void mergeBU(int array[], int l, int m, int r);
+void bubbleSort(int arr[], int len);
+void combSort(int arr[], int len);  
 /* helper functions */
 void swap(int* a, int* b);
 int minimum(int x, int y);  
