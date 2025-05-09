@@ -18,8 +18,8 @@ int partition(int* array, int low, int high);
 void quickSort(int* array, int low, int high);
 void mergesortBU(int array[], int arraySize);
 void mergeBU(int array[], int l, int m, int r);
-void bubbleSort(int arr[], int len);
-void combSort(int arr[], int len);  
+void bubbleSort(int arr[], int n);
+void combSort(int arr[], int n);  
 /* helper functions */
 void swap(int* a, int* b);
 int minimum(int x, int y);  
