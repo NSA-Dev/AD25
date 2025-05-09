@@ -1,6 +1,6 @@
 #ifndef SORT_H
 #define SORT_H
-
+#define TEMP_SIZE 12
 
 extern unsigned long int exchangeCount;
 extern unsigned long int compareCount;

@@ -1,5 +1,7 @@
 #include "sort.h"
 
+
+
  
 void swap(int* a, int* b) { 
     int temp = *a;
@@ -136,6 +138,81 @@ void mergeSortedArrays(int a[], int l, int m, int r) {
 
     return;
 }
+
+/* Iterative mergesort function to sort arr[0...n-1] */
+void mergesortBU(int array[], int arraySize){
+	// For current size of subarrays to be merged
+	// curr_size varies from 1 to n/2
+	int currSize = 0;
+	// For picking starting index of left subarray
+	// to be merged
+	int leftStart = 0;
+
+	// Merge subarrays in bottom up manner. First merge subarrays of
+	// size 1 to create sorted subarrays of size 2, then merge subarrays
+	// of size 2 to create sorted subarrays of size 4, and so on.
+	for (currSize = 1; currSize <= arraySize - 1; currSize = 2 * currSize){
+		// Pick starting point of different subarrays of current size
+		for (leftStart = 0; leftStart < arraySize - 1; leftStart += 2 * currSize){
+			// Find ending point of left subarray. mid+1 is starting
+			// point of right
+			int mid = minimum(leftStart + currSize - 1, arraySize - 1);
+
+			int right_end = minimum(leftStart + 2 * currSize - 1, arraySize - 1);
+
+			// Merge Subarrays arr[left_start...mid] & arr[mid+1...right_end]
+			mergeBU(array, leftStart, mid, right_end);
+		}
+	}
+}
+
+/* Function to merge the two haves arr[l..m] and arr[m+1..r] of array arr[] */
+void mergeBU(int array[], int l, int m, int r){
+	int i = 0, j = 0, k = 0;
+	int leftSize = m - l + 1;
+	int rightSize = r - m;
+
+	/* create temp arrays */
+	int leftPart[TEMP_SIZE] = { 0 }, rightPart[TEMP_SIZE] = { 0 };
+
+	/* Copy data to temp arrays L[] and R[] */
+	for (i = 0; i < leftSize; i++)
+		leftPart[i] = array[l + i];
+	for (j = 0; j < rightSize; j++)
+		rightPart[j] = array[m + 1 + j];
+
+	/* Merge the temp arrays back into arr[l..r]*/
+	i = 0;
+	j = 0;
+	k = l;
+	while (i < leftSize && j < rightSize){
+		if (leftPart[i] <= rightPart[j]){
+			array[k] = leftPart[i];
+			i++;
+		}
+		else{
+			array[k] = rightPart[j];
+			j++;
+		}
+		k++;
+	}
+
+	/* Copy the remaining elements of L[], if there are any */
+	while (i < leftSize){
+		array[k] = leftPart[i];
+		i++;
+		k++;
+	}
+
+	/* Copy the remaining elements of R[], if there are any */
+	while (j < rightSize){
+		array[k] = rightPart[j];
+		j++;
+		k++;
+	}
+}
+
+
 
 int partition(int* array, int low, int high) {
     int pivot = array[high];
