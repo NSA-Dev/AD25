@@ -13,9 +13,12 @@ void mergeSort(int a[], int len);
 void mergeSort_recursion(int a[], int l, int r);
 void mergeSortedArrays(int a[], int l, int m, int r);
 int partition(int* array, int low, int high);
-void quickSort(int* array, int low, int high); 
+void quickSort(int* array, int low, int high);
+void mergesortBU(int array[], int arraySize);
+void mergeBU(int array[], int l, int m, int r); 
 /* helper functions */
-void swap(int* a, int* b); 
+void swap(int* a, int* b);
+int minimum(int x, int y);  
 void copyArray(int a[], int b[], int len); // array length must match 
 
 #endif

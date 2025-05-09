@@ -8,6 +8,10 @@ void swap(int* a, int* b) {
     return; 
 }
 
+int minimum(int x, int y) { 
+	return (x < y) ? x : y; 
+}
+
 void copyArray(int a[], int b[], int len) {
     for(int i = 0; i < len; i++) {
         b[i] = a[i];

@@ -1,26 +1,39 @@
 #include <stdio.h>
-#include "array.h"
+#include <stdlib.h>
+#include <time.h>
 #include "sort.h"
+
+#define TIMEOUT_SEC 300 // if runtime > 5 min (300 s) stop the sort
+// Contents of array.h << moved here due to submission reqs
+#define OLD_MAX_SIZE 20 // inital size
+#define MAX_SIZE 50000
+
+void initArray(int a[], int k, int size); // init array a with k values  
+void printArray(int a[], int size);
+int pickRandomIndex(int size);
+void shiftLeft(int a[], int start, int size);
+void shuffleK(int a[], int k, int size); // pick k elements randomly, assign to the end while shifting left
+// end of array.h
 
 unsigned long int exchangeCount = 0; 
 unsigned long int compareCount = 0;  
 
-
-void resetCounters(void);
+void resetCounters(void); 
+void getSortsRuntime(void);     // measure runtime of selectionSort & mergeSort
 
 int main(void) {
     // Declare arrays containing counter info for each algo
     unsigned long int exchanges[4], comparisons[4];
     // Create an array, init from 1 to MAX_SIZE, print result 
-    int array[MAX_SIZE];
-    initArray(array, MAX_SIZE); 
+    int array[OLD_MAX_SIZE];
+    initArray(array, OLD_MAX_SIZE, OLD_MAX_SIZE); 
     printf("Initialized array:\n");
-    printArray(array);
+    printArray(array, OLD_MAX_SIZE);
 
     // Randomly shuffle the array, print result
-    shuffleK(array, MAX_SIZE);
+    shuffleK(array, OLD_MAX_SIZE, OLD_MAX_SIZE);
     printf("Shuffled array:\n"); 
-    printArray(array);
+    printArray(array, OLD_MAX_SIZE);
         
 
     // Test the following sorts(get count of exchanges & comparisons):
@@ -32,44 +45,44 @@ int main(void) {
         
     // Insertion sort
     printf("Running insertion sort... \n");
-    insertionSort(array, MAX_SIZE);
+    insertionSort(array, OLD_MAX_SIZE);
     exchanges[0] = exchangeCount;
     comparisons[0] = compareCount;
     resetCounters();
     printf("Selection sort result:\n");
-    printArray(array);
-    shuffleK(array, MAX_SIZE); // reshuffle the array again  
+    printArray(array, OLD_MAX_SIZE);
+    shuffleK(array, OLD_MAX_SIZE, OLD_MAX_SIZE); // reshuffle the array again  
 
     // Selection sort
     printf("Running selection sort... \n");
-    selectionSort(array, MAX_SIZE);
+    selectionSort(array, OLD_MAX_SIZE);
     exchanges[1] = exchangeCount;
     comparisons[1] = compareCount;
     resetCounters();
     printf("Selection sort result:\n");
-    printArray(array);
-    shuffleK(array, MAX_SIZE);
+    printArray(array, OLD_MAX_SIZE);
+    shuffleK(array, OLD_MAX_SIZE, OLD_MAX_SIZE);
 
         
     // Shell sort
     printf("Running Shellsort... \n");
-    shellSort(array, MAX_SIZE);
+    shellSort(array, OLD_MAX_SIZE);
     exchanges[2] = exchangeCount;
     comparisons[2] = compareCount;
     resetCounters();
     printf("Shellsort result:\n");
-    printArray(array);
-    shuffleK(array, MAX_SIZE);
+    printArray(array, OLD_MAX_SIZE);
+    shuffleK(array, OLD_MAX_SIZE, OLD_MAX_SIZE);
 
 
     // Quick sort
     printf("Running quicksort... \n");
-    quickSort(array, 0, MAX_SIZE - 1);
+    quickSort(array, 0, OLD_MAX_SIZE - 1);
     exchanges[3] = exchangeCount;
     comparisons[3] = compareCount;
     resetCounters();
     printf("Quicksort result:\n");
-    printArray(array);
+    printArray(array, OLD_MAX_SIZE);
     
 
     // Print the table
@@ -84,7 +97,9 @@ int main(void) {
 	printf("| %-14s | %-16lu | %-16lu |\n", "Quicksort", comparisons[3], exchanges[3]);
 	printf("+----------------+------------------+------------------+\n");
 
-            return 0;
+    // Runtime test
+    getSortsRuntime();
+    return 0;
 }
 
 
@@ -92,3 +107,126 @@ void resetCounters(void) {
     exchangeCount = 0;
     compareCount = 0; 
 }
+
+void getSortsRuntime(void) {
+    // declare metrics
+    unsigned long selComp, mergeComp;
+    // declare clock times 
+    clock_t start, end;  
+    double mergeTime, selTime;
+    // declare flags for enabling algorithm options
+    int enable_selectionSort, enable_mergeSort;
+
+
+    // init flags
+    enable_selectionSort = 1;
+    enable_mergeSort = 1; 
+    
+    // print the heading
+    printf("\n+--------+----------------+----------------+----------------+----------------+\n");
+    printf("| %-6s | %-14s | %-14s | %-14s | %-14s |\n", 
+           "k", "SelSort Time", "SelSort Comp", "MergeSort Time", "MergeSort Comp");
+    printf("+--------+----------------+----------------+----------------+----------------+\n");
+    
+    // Test loop
+    for(int k = 500; k < MAX_SIZE; k *= 2) {
+        // Allocate new array of k size
+        int *array =(int *) malloc(k * sizeof(int));
+        
+        // Exit if out of memory 
+        if(!array) {
+            printf("Memory allocation failed for k=%d (getSortsRuntime()\n)");
+            printf("Shutting down...\n");
+            exit(EXIT_FAILURE); 
+        }
+        
+        // init array 1 up to k
+        initArray(array, k, k);
+ 
+        
+        // Test selectionSort()
+        if(enable_selectionSort) {
+            shuffleK(array, k, k); // shuffle before sorting
+            start = clock();
+            selectionSort(array, k);
+            end = clock(); 
+            selTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            selComp = compareCount;
+            resetCounters(); 
+        
+            // stop the test run if computational time exceeds TIMEOUT_SEC 
+            if(selTime > TIMEOUT_SEC) enable_selectionSort = 0;  
+
+        } 
+
+        // Test mergeSort
+        if(enable_mergeSort) {
+            shuffleK(array, k, k); // shuffle before sorting
+            start = clock(); 
+            mergeSort(array, k);
+            end = clock(); 
+            mergeTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            mergeComp = compareCount;
+            resetCounters();
+
+            if(mergeTime > TIMEOUT_SEC) enable_mergeSort = 0;  
+        }
+        
+        // Print table entry
+        printf("| %-6d | ", k);
+        if(selTime >= 0) printf("%-14.3f | %-14lu | ", selTime, selComp);
+        else printf("%-14s | %-14s | ", "TIMEOUT", "TIMEOUT");
+        
+        if(mergeTime >= 0) printf("%-14.3f | %-14lu |\n", mergeTime, mergeComp);
+        else printf("%-14s | %-14s |\n", "TIMEOUT", "TIMEOUT");
+
+        // never forget to free the memory
+        free(array); 
+    }
+    printf("+--------+----------------+----------------+----------------+----------------+\n");
+}
+
+
+// Contents of array.c << moved here due to submission reqs
+
+void initArray(int a[],  int k, int size) {
+    /* First the array shall be initialized with 1 to MAX_SIZE (main.c) asc */
+    for(int i = 0; i < size; i++) {
+        a[i] = i+1;
+    }
+}
+
+void printArray(int a[], int size) {
+    for(int i = 0; i < size; i++) {
+        printf("%d ", a[i]);
+    }
+
+   printf("\n"); 
+}
+
+int pickRandomIndex(int size) { 
+    int index = rand() % size; 
+    return index;
+}
+
+
+void shiftLeft(int a[], int start, int size) {
+    int temp = a[start]; // pluck the value of interest from the array 
+    for(int i = start; i < size - 1; i++) {
+        a[i] = a[i + 1]; // shift everything to the value's position
+    }
+    a[size - 1] = temp; // assign the value to the end of the array  
+    
+}
+
+void shuffleK(int a[], int k, int size) { 
+    srand(time(NULL)); // Init seed for pickRandomIndex() calls 
+    
+    if(k > size) k = size; // if k exceeds the range assign the limit to it
+    
+    while(k--) {
+        int random = pickRandomIndex(size);
+        shiftLeft(a, random, size);  
+    }
+}
+// end of array.c
