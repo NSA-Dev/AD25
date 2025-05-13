@@ -1,7 +1,11 @@
+/**
+ * Lab2 Tasks
+ * Submission by Nikita Semeniuk ID: 2722726
+ * 
+ * Date 2025-05-09
+
+ */
 #include "sort.h"
-
-
-
  
 void swap(int* a, int* b) { 
     int temp = *a;
@@ -69,6 +73,7 @@ void shellSort(int a[], int len) {
 
     for(int gap = len/2; gap > 0; gap /= 2) {
         for(int i = gap; i < len; i++) {
+            compareCount++;
             compared = a[i];
             int j;
             for(j = i; j >= gap && a[j - gap] > compared; j -= gap) {
@@ -76,8 +81,7 @@ void shellSort(int a[], int len) {
                 compareCount++;
                 exchangeCount++; 
             }
-            a[j] = compared;
-            exchangeCount++;    
+            a[j] = compared;   
         } 
     }
 }
@@ -109,9 +113,13 @@ void mergeSortedArrays(int a[], int l, int m, int r) {
     int rightLen = r - m;
 
     /*Declare subsections and their indices */
-    int tempLeft[leftLen];
-    int tempRight[rightLen];
-    
+    int* tempLeft = (int*)malloc(leftLen * sizeof(int));
+    int* tempRight = (int*)malloc(rightLen * sizeof(int));
+
+    if (!tempLeft || !tempRight) {
+        printf("malloc fail inside mergeSortedArrays, returning...\n");
+        return; 
+    }
 
     /* Copy subsections */
     for(int i = 0; i < leftLen; i++) {
@@ -143,9 +151,11 @@ void mergeSortedArrays(int a[], int l, int m, int r) {
             j++; 
         }
     }
-
+    free(tempLeft);
+    free(tempRight); 
     return;
 }
+
 void mergeBU(int array[], int l, int m, int r) {
     int leftSize = m - l + 1;
     int rightSize = r - m;
@@ -182,10 +192,12 @@ void mergeBU(int array[], int l, int m, int r) {
     while (i < leftSize) {
         array[k++] = leftPart[i++];
         exchangeCount++;
+        compareCount++;
     }
     while (j < rightSize) {
         array[k++] = rightPart[j++];
         exchangeCount++;
+        compareCount++;
     }
     
     free(leftPart);
@@ -222,10 +234,13 @@ void mergesortBU(int array[], int arraySize) {
             // Copy remaining elements
             while (i <= mid) {
                 temp[k++] = array[i++];
+                compareCount++;
                 exchangeCount++;
+
             }
             while (j <= rightEnd) {
                 temp[k++] = array[j++];
+                compareCount++;
                 exchangeCount++;
             }
             
@@ -233,6 +248,7 @@ void mergesortBU(int array[], int arraySize) {
             for (i = leftStart, k = 0; i <= rightEnd; i++, k++) {
                 array[i] = temp[k];
                 exchangeCount++;
+                compareCount++;
             }
         }
     }
@@ -249,6 +265,7 @@ int partition(int* array, int low, int high) {
 
 
     for(int j = low; j < high; j++) {
+        compareCount++;
         if(array[j] <= pivot) {
             swap(&array[i], &array[j]);
             exchangeCount++;
@@ -286,7 +303,7 @@ void bubbleSort(int arr[], int n) {
                 swapped = 1;
             }
         }
-        n--; // Optimization - largest element bubbles to end
+       // n--; // Optimization - largest element bubbles to end
     } while (swapped);
 }
 

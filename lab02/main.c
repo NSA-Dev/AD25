@@ -1,3 +1,11 @@
+/**
+ * Lab2 Tasks
+ * Submission by Nikita Semeniuk ID: 2722726
+ * 
+ * Date 2025-05-09
+
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -7,6 +15,7 @@
 // Contents of array.h << moved here due to submission reqs
 #define OLD_MAX_SIZE 20 // inital size
 #define MAX_SIZE 50000
+#define NEW_MAX_SIZE 1000
 
 void initArray(int a[], int k, int size); // init array a with k values  
 void printArray(int a[], int size);
@@ -30,6 +39,7 @@ unsigned long int compareCount = 0;
 void resetCounters(void); 
 void getSortsRuntime(void);     // measure runtime of selectionSort & mergeSort
 void benchmarkAll(void);
+double calculateTime_S(clock_t start, clock_t end);
 
 int main(void) {
     // Declare arrays containing counter info for each algo
@@ -52,6 +62,8 @@ int main(void) {
     // 3. Shell sort
     // 4. Quick sort
     // Print results table
+
+
         
     // Insertion sort
     printf("Running insertion sort... \n");
@@ -110,6 +122,34 @@ int main(void) {
     // Runtime test
     getSortsRuntime();
     benchmarkAll();
+
+
+
+    // bubble sort & comb sort (printing disabled due to NEW_MAX_SIZE)
+    int arrayNew[NEW_MAX_SIZE];
+    initArray(arrayNew, NEW_MAX_SIZE, NEW_MAX_SIZE);
+
+    //printf("\nBubble sort run:\n Original array: ");
+    //printArray(arrayNew, NEW_MAX_SIZE);
+    shuffleK(arrayNew, NEW_MAX_SIZE, NEW_MAX_SIZE);
+    bubbleSort(arrayNew, NEW_MAX_SIZE);
+    //printf("Sorted: ");
+    //printArray(arrayNew, NEW_MAX_SIZE);
+    printf("Bubble sort - Exchanges: %d\nComparisons: %d\n", exchangeCount, compareCount);
+    resetCounters();
+
+
+
+
+    //printf("\nComb sort run:\nOriginal array: ");
+    //printArray(arrayNew, NEW_MAX_SIZE);
+    shuffleK(arrayNew, NEW_MAX_SIZE, NEW_MAX_SIZE);
+    combSort(arrayNew, NEW_MAX_SIZE);
+    //printf("Sorted: ");
+    //printArray(arrayNew, NEW_MAX_SIZE);
+    printf("Comb sort - Exchanges: %d\nComparisons: %d\n", exchangeCount, compareCount);
+    resetCounters();
+
     return 0;
 }
 
@@ -118,7 +158,7 @@ void resetCounters(void) {
     exchangeCount = 0;
     compareCount = 0; 
 }
-
+// Task 3
 void getSortsRuntime(void) {
     // declare metrics
     unsigned long selComp, mergeComp;
@@ -146,7 +186,7 @@ void getSortsRuntime(void) {
         
         // Exit if out of memory 
         if(!array) {
-            printf("Memory allocation failed for k=%d (getSortsRuntime()\n)");
+            printf("Memory allocation failed for k=%d (getSortsRuntime()\n)", k);
             printf("Shutting down...\n");
             exit(EXIT_FAILURE); 
         }
@@ -161,7 +201,7 @@ void getSortsRuntime(void) {
             start = clock();
             selectionSort(array, k);
             end = clock(); 
-            selTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            selTime = calculateTime_S(start, end);
             selComp = compareCount;
             resetCounters(); 
         
@@ -176,7 +216,7 @@ void getSortsRuntime(void) {
             start = clock(); 
             mergeSort(array, k);
             end = clock(); 
-            mergeTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            mergeTime = calculateTime_S(start, end);;
             mergeComp = compareCount;
             resetCounters();
 
@@ -185,7 +225,7 @@ void getSortsRuntime(void) {
         
         // Print table entry
         printf("| %-6d | ", k);
-        if(selTime >= 0) printf("%-14.3f | %-14lu | ", selTime, selComp);
+        if(selTime >= 0) printf("%-14.3f | %-14lu | ", selTime, selComp); //14.3 printing for doubles was used before
         else printf("%-14s | %-14s | ", "TIMEOUT", "TIMEOUT");
         
         if(mergeTime >= 0) printf("%-14.3f | %-14lu |\n", mergeTime, mergeComp);
@@ -196,7 +236,7 @@ void getSortsRuntime(void) {
     }
     printf("+--------+----------------+----------------+----------------+----------------+\n");
 }
-
+// Task 4
 void benchmarkAll(void) {
 	clock_t start, end; // declare clock start times
 	
@@ -228,7 +268,7 @@ void benchmarkAll(void) {
         
         // Exit if out of memory 
         if(!array) {
-            printf("Memory allocation failed for k=%d (getSortsRuntime()\n)");
+            printf("Memory allocation failed for k=%d (getSortsRuntime()\n)", k[i]);
             printf("Shutting down...\n");
             exit(EXIT_FAILURE); 
         }
@@ -241,7 +281,7 @@ void benchmarkAll(void) {
             start = clock();
             insertionSort(array, k[i]);
             end = clock(); 
-            insStats.runTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            insStats.runTime = calculateTime_S(start, end);;
             insStats.comparisons = compareCount;
             insStats.exchanges = exchangeCount;
             resetCounters(); 
@@ -256,7 +296,7 @@ void benchmarkAll(void) {
             start = clock();
             selectionSort(array, k[i]);
             end = clock(); 
-            selStats.runTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            selStats.runTime = calculateTime_S(start, end);;
             selStats.comparisons = compareCount;
             selStats.exchanges = exchangeCount;
             resetCounters(); 
@@ -272,7 +312,7 @@ void benchmarkAll(void) {
             start = clock();
             shellSort(array, k[i]);
             end = clock(); 
-            shellStats.runTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            shellStats.runTime = calculateTime_S(start, end);;
             shellStats.comparisons = compareCount;
             shellStats.exchanges = exchangeCount;
             resetCounters(); 
@@ -287,7 +327,7 @@ void benchmarkAll(void) {
             start = clock();
             mergeSort(array, k[i]);
             end = clock(); 
-            mergeStats.runTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            mergeStats.runTime = calculateTime_S(start, end);;
             mergeStats.comparisons = compareCount;
             mergeStats.exchanges = exchangeCount;
             resetCounters(); 
@@ -303,7 +343,7 @@ void benchmarkAll(void) {
             start = clock();
             mergesortBU(array, k[i]);
             end = clock(); 
-            mergeStats_bu.runTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            mergeStats_bu.runTime = calculateTime_S(start, end);;
             mergeStats_bu.comparisons = compareCount;
             mergeStats_bu.exchanges = exchangeCount;
             resetCounters(); 
@@ -319,7 +359,7 @@ void benchmarkAll(void) {
             start = clock();
             quickSort(array, 0, k[i] - 1);
             end = clock(); 
-            qsStats.runTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+            qsStats.runTime = calculateTime_S(start, end);;
             qsStats.comparisons = compareCount;
             qsStats.exchanges = exchangeCount;
             resetCounters(); 
@@ -331,6 +371,8 @@ void benchmarkAll(void) {
         
         // free the memory
         free(array); 
+
+
 		// print all stats for current k 
 		// Print benchmark header
 		printf("\n          ===== ALL SORTS BENCHMARK =====\n");
@@ -343,27 +385,27 @@ void benchmarkAll(void) {
 		printf("+----------------+----------------+----------------+----------------+\n");
 
 		// Insertion Sort
-		printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",
+		printf("| %-14s | %-14.3f | %-14lu | %-14lu |\n",
        "Insertion", insStats.runTime, insStats.comparisons, insStats.exchanges);
 
 		// Selection Sort
-		printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",
+		printf("| %-14s | %-14.3f | %-14lu | %-14lu |\n",
        "Selection", selStats.runTime, selStats.comparisons, selStats.exchanges);
 
 		// Shell Sort
-		printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",
+		printf("| %-14s | %-14.3f | %-14lu | %-14lu |\n",
        "Shell", shellStats.runTime, shellStats.comparisons, shellStats.exchanges);
 
 		// Merge Sort (Top-Down)
-		printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",
+		printf("| %-14s | %-14.3f | %-14lu | %-14lu |\n",
        "Merge TD", mergeStats.runTime, mergeStats.comparisons, mergeStats.exchanges);
 
 		// Merge Sort (Bottom-Up)
-		printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",
+		printf("| %-14s | %-14.3f | %-14lu | %-14lu |\n",
        "Merge BU", mergeStats_bu.runTime, mergeStats_bu.comparisons, mergeStats_bu.exchanges);
 
 		// Quick Sort
-		printf("| %-14s | %-14.6f | %-14lu | %-14lu |\n",
+		printf("| %-14s | %-14.3f | %-14lu | %-14lu |\n",
        "Quick", qsStats.runTime, qsStats.comparisons, qsStats.exchanges);
 
 		// Footer
@@ -374,6 +416,16 @@ void benchmarkAll(void) {
 	printf("+----------------+----------------+----------------+----------------+\n");
 	return;
 }
+
+double calculateTime_S(clock_t start, clock_t end) {
+
+    double res = (((double)(end - start)) ) / CLOCKS_PER_SEC;
+    return res; 
+}
+
+
+
+
 
 // Contents of array.c << moved here due to submission reqs
 

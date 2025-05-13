@@ -1,3 +1,11 @@
+/**
+ * Lab2 Tasks
+ * Submission by Nikita Semeniuk ID: 2722726
+ * 
+ * Date 2025-05-09
+
+ */
+
 #ifndef SORT_H
 #define SORT_H
 
