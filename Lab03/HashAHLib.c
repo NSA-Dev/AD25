@@ -105,6 +105,22 @@ Function returns the value of entry or NULL if the key does not exist in the has
 */
 char* getAH(sElementAH hashtableAH[MAX_ARRAY], int key) {
 	//Todo: Assignment 1.2
+	int i = hashing(key);
+	int startIndex = i; 
+	
+	// search the array, if arrived at the start return NULL
+	do {
+		// keys match, return value
+		if(hashtableAH[i].key == key) return hashtableAH[i].value;  
+	
+		// empty key -> return null
+		if(hashtableAH[i].key == -1) return NULL;
+		
+		// adjust index
+		i = (i + 1) % MAX_ARRAY; 
+	} while(i != startIndex);
+	
+	return NULL; 
 }
 
 /*
