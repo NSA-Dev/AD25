@@ -33,20 +33,27 @@ int getInt() {
 * @return
 * None.
 */
-void getString(char string[]) {
-	while (1) {
-		if (scanf("%s", string) != 1) {
-			while (getchar() != '\n');
-			printf("Not a valid integer.\n");
-		}
-		else {
-			while (getchar() != '\n');
-			break;
-		}
-	}
-	return;
-}
 
+void getString(char string[]) {
+    while (1) {
+        if (fgets(string, MAX_STRING, stdin) == NULL) {
+            printf("Error reading input.\n");
+            continue;
+        }
+        
+        // Remove trailing newline if present
+        size_t len = strlen(string);
+        if (len > 0 && string[len-1] == '\n') {
+            string[len-1] = '\0';
+        }
+        
+        // Check if input was just whitespace
+        if (string[0] != '\0') {
+            break;
+        }
+        printf("Input cannot be empty. Try again.\n");
+    }
+}
 
 /*
 Function calculates the hash value for the passed key.
@@ -104,7 +111,6 @@ Function searches for the entry in the hash table having the passed key.
 Function returns the value of entry or NULL if the key does not exist in the hash table.
 */
 char* getAH(sElementAH hashtableAH[MAX_ARRAY], int key) {
-	//Todo: Assignment 1.2
 	int i = hashing(key);
 	int startIndex = i; 
 	
@@ -128,7 +134,21 @@ Function searches for the entry in the hash table having the passed key.
 If it finds an entry the function deletes it from the hash table.
 */
 void deleteAH(sElementAH hashtableAH[MAX_ARRAY], int key) {
-	//Todo: Assignment 1.3
+	int i = hashing(key);
+	int startIndex = i; 
+	
+	do {
+		// key found, delete entry from the table
+		if(hashtableAH[i].key == key) {
+			hashtableAH[i].key = -1;
+			hashtableAH[i].value[0] = '\0';
+			return; 
+		}	
+		// adjust index
+		i = (i + 1) % MAX_ARRAY; 
+	
+	} while (i != startIndex);
+	 
 }
 
 /*
@@ -136,7 +156,16 @@ Function prints the hash table.
 If a field in the array is empty, it prints “empty”.
 */
 void printHashTableAH(sElementAH hashtableAH[MAX_ARRAY]) {
-	//Todo: Assignment 1.4
+	// print the heading
+	printf("| %-4s | %-30s |\n", "KEY", "VALUE");  
+    printf("|------|--------------------------------|\n"); 
+	// print the table elements
+	for(int i = 0; i < MAX_ARRAY; i++) {
+		if(hashtableAH[i].key == -1) printf("NULL		%s\n", "<EMPTY>"); 
+		else {
+			printf("%d		%s\n", hashtableAH[i].key, hashtableAH[i].value);
+		}
+	}
 }
 
 /*
