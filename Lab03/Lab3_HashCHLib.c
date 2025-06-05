@@ -71,19 +71,13 @@ char* getCH(sElementCH hashtableCH[MAX_ARRAY], int (*hashMethod) (int),  int key
 	int i = hashMethod(key);
 	int startIndex = i; 
 	
-	// search the array, if arrived at the start return NULL
-	do {
-		// keys match, return value
-		if(hashtableCH[i].key == key) return hashtableCH[i].value;  
-	
-		// empty key -> return null
-		if(hashtableCH[i].key == -1) return NULL;
-		
-		// adjust index
-		i = (i + 1) % MAX_ARRAY; 
-	} while(i != startIndex);
-	
-	return NULL; 
+	// check the main bucket if found the key return its value 
+	if(hashtableCH[i].key == key) {
+		return hashtableCH[i].value; 
+	} else {
+		return NULL; // TODO
+	}
+	 
 }
 
 /*
@@ -92,20 +86,39 @@ If it finds an entry the function deletes it from the hash table.
 */
 void deleteCH(sElementCH hashtableCH[MAX_ARRAY], int (*hashMethod) (int), int key) {
 	int i = hashMethod(key);
-	int startIndex = i; 
 	
-	do {
-		// key found, delete entry from the table
-		if(hashtableCH[i].key == key) {
+	// check the main bucket 
+	if(hashtableCH[i].key == key) {
+		if(hashtableCH[i].next == NULL) {
 			hashtableCH[i].key = -1;
 			hashtableCH[i].value[0] = '\0';
-			return; 
-		}	
-		// adjust index
-		i = (i + 1) % MAX_ARRAY; 
+		} 
+		// else promote next element to the starting position
+		else {
+			sElementCH* temp = hashtableCH[i].next;
+			hashtableCH[i].key = temp->key;
+			strcpy(hashtableCH[i].value, temp->value);
+			hashtableCH[i].next = temp->next;
+			free(temp); // discard the duplicate
+		}
+		return; 
+	}
 	
-	} while (i != startIndex);
-	 
+	// Check if the chain has the key 
+	sElementCH* current = &hashtableCH[i];
+	sElementCH* prev = NULL; // needed for iteration down the line 
+	while(current->next != NULL) {
+		prev = current;
+		current = current->next;
+		
+		// if current->key matches, then adjust prev pointer to its val, free current
+		if(current->key == key) {
+			prev->next = current->next;
+			free(current);
+			return; 
+		}
+	} 
+	return; // nothing found, return 
 }
 
 /*
@@ -121,6 +134,13 @@ void printHashTableCH(sElementCH hashtableCH[MAX_ARRAY]) {
 		if(hashtableCH[i].key == -1) printf("NULL		%s\n", "<EMPTY>"); 
 		else {
 			printf("%d		%s\n", hashtableCH[i].key, hashtableCH[i].value);
+		}
+		
+		// print chained
+		sElementCH* current = hashtableCH[i].next;
+		while(current != NULL) {
+			printf("%d		%s\n", current->key, current->value);
+			current = current->next; 
 		}
 	}
 }

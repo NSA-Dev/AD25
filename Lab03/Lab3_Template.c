@@ -115,7 +115,6 @@ int main() {
 				deleteAH(hashtableAH, hashMethod, key);
 				printHashTableAH(hashtableAH);
 				break;
-				// Switch hashing method 
 
 			default:
 				return 0;
@@ -133,7 +132,58 @@ int main() {
 		//Read in the key-value-pairs from the csv-file and print the hash table
 		readCSVCH(fP, hashtableCH, hashMethod); // TODO
 		printHashTableCH(hashtableCH); // TODO 
-		while (1);
+		do {
+			// Print currently selected method used for Hash calculations
+			switch(hashMethod_choice) {
+			case 1:
+				printf("Hashing method -> mod \n");
+				break;
+			case 2:
+				printf("Hashing method -> mid square\n");
+				break;
+			case 3:
+				printf("Hashing method -> multiplication\n");
+				break;
+			case 4:
+				printf("Hashing method -> XOR shift\n");
+				break;
+			}
+			printf("What do you like to do?\n1: Adding new element\n2: Searching for an element\n3: Delete key\nAny other choice: exit program\n");
+			choice = getInt();
+			switch (choice) {
+				//Adding a new element to the hash table
+			case 1:
+				printf("Type in the key: \n");
+				key = getInt();
+				printf("\nType in the value: \n");
+				getString(value);
+				counter = putCH(hashtableCH, hashMethod, key, value);
+				printHashTableCH(hashtableCH);
+				printf("There were %d collision(s).\n", counter);
+				break;
+				//Searching for an element
+			case 2:
+				printf("Type in the key: \n");
+				key = getInt();
+				valuePointer = getCH(hashtableCH, hashMethod, key);
+				if (valuePointer == NULL)
+					printf("Key not found in hashtable\n");
+				else
+					printf("Value is %s\n", valuePointer);
+				valuePointer = NULL;
+				break;
+				//Delete a key-value pair if it exists
+			case 3:
+				printf("Type in the key: \n");
+				key = getInt();
+				deleteCH(hashtableCH, hashMethod, key);
+				printHashTableCH(hashtableCH);
+				break;
+
+			default:
+				return 0;
+		}
+		} while (1);
 		break;
 	default:
 		// free resources in Case chained addressing was used
