@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include "HashAHLib.h"
+#define MAX_OPTIONS 2 // max currently available options for hashing 
 
 int main() {
 	//Variables
@@ -10,6 +11,8 @@ int main() {
 	char value[MAX_STRING] = { 0 };
 	char* valuePointer = NULL;
 	int counter=0;
+	int (*hashMethod) (int) = NULL; // pointer to the currently used hashing method
+	int hashMethod_choice = 1;  // user choice for hashing method (default 0 - mod)
 
 	//Open csv-file
 	FILE* fP = NULL;
@@ -23,6 +26,8 @@ int main() {
 	printf("Welcome to our Hashing program!\n");
 	printf("What kind of collision strategy do you prefer?\n1: Address Hashing\n2: Chained Hashing\nAny other choice: exit program\n");
 	choice = getInt();
+	// set default hashing method
+	hashMethod = hashing; 
 
 	switch (choice) {
 	case 1:
@@ -35,13 +40,23 @@ int main() {
 		}
 
 		//Read in the key-value-pairs from the csv-file and print the hash table
-		readCSVAH(fP, hashtableAH);
+		readCSVAH(fP, hashtableAH, hashMethod);
 		printHashTableAH(hashtableAH);
 
 		//User can choose what to do next
 		printf("OK, lets do Hashing using Address Hashing strategy:-)\n");
 		do {
-			printf("What do you like to do?\n1: Adding new element\n2: Searching for an element\n3: Delete key\nAny other choice: exit program\n");
+			// Print currently selected method used for Hash calculations
+			switch(hashMethod_choice) {
+			case 1:
+				printf("Hashing method -> mod \n");
+				break;
+			case 2:
+				printf("Hashing method -> mid square\n");
+				break; 
+			}
+			
+			printf("What do you like to do?\n1: Adding new element\n2: Searching for an element\n3: Delete key\n4: Switch hashing method\nAny other choice: exit program\n");
 			choice = getInt();
 			switch (choice) {
 				//Adding a new element to the hash table
@@ -50,7 +65,7 @@ int main() {
 				key = getInt();
 				printf("\nType in the value: \n");
 				getString(value);
-				counter = putAH(hashtableAH, key, value);
+				counter = putAH(hashtableAH, hashMethod, key, value);
 				printHashTableAH(hashtableAH);
 				printf("There were %d collision(s).\n", counter);
 				break;
@@ -58,7 +73,7 @@ int main() {
 			case 2:
 				printf("Type in the key: \n");
 				key = getInt();
-				valuePointer = getAH(hashtableAH, key);
+				valuePointer = getAH(hashtableAH, hashMethod, key);
 				if (valuePointer == NULL)
 					printf("Key not found in hashtable\n");
 				else
@@ -69,9 +84,22 @@ int main() {
 			case 3:
 				printf("Type in the key: \n");
 				key = getInt();
-				deleteAH(hashtableAH, key);
+				deleteAH(hashtableAH, hashMethod, key);
 				printHashTableAH(hashtableAH);
 				break;
+				// Switch hashing method 
+			case 4:
+				printf("Available options:\n1: mod (default)\n2: mid square\n");
+				hashMethod_choice = getInt(); 
+				if(hashMethod_choice > MAX_OPTIONS) {
+					printf("Selected option is unavailable. Reseting to default\n");
+					hashMethod_choice = 1;
+					hashMethod = hashing; 
+					break;
+				}
+				if(hashMethod_choice == 1) hashMethod = hashing;
+				if(hashMethod_choice == 2) hashMethod = hash_Midsquare;
+				break; 	
 				//Exit program
 			default:
 				return 0;

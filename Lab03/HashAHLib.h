@@ -29,13 +29,16 @@ int getInt();
 Function reads a string value safely from the keyboardand.
 */
 void getString(char string[]);
-
+/**********************************************************************************************************************
+Hashing functions
+**********************************************************************************************************************/
+/*
 /*
 Function calculates the hash value for the passed key.
 Function return the calculated hash value.
 */
 int hashing(int key);
-
+int hash_Midsquare (int key);
 
 /**********************************************************************************************************************
 Prototypes for address hashing
@@ -45,19 +48,19 @@ Function creates a new entry in the hash table or if the key already exists over
 Function receives the hash table and the key-value-pair to be inserted.
 Function returns the number of collisions.
 */
-int putAH(sElementAH hashtableAH[MAX_ARRAY], int key, char value[MAX_STRING]);
+int putAH(sElementAH hashtableAH[MAX_ARRAY], int (*hashMethod) (int),  int key, char value[MAX_STRING]);
 
 /*
 Function searches for the entry in the hash table having the passed key.
 Function returns the value of entry or NULL if the key does not exist in the hash table.
 */
-char* getAH(sElementAH hashtableAH[MAX_ARRAY], int key);
+char* getAH(sElementAH hashtableAH[MAX_ARRAY], int (*hashMethod) (int),  int key);
 
 /*
 Function searches for the entry in the hash table having the passed key.
 If it finds an entry the function deletes it from the hash table.
 */
-void deleteAH(sElementAH hashtableAH[MAX_ARRAY], int key);
+void deleteAH(sElementAH hashtableAH[MAX_ARRAY], int (*hashMethod) (int),  int key);
 
 /*
 Function prints the hash table.
@@ -68,7 +71,7 @@ void printHashTableAH(sElementAH hashtableAH[MAX_ARRAY]);
 Function gets a file pointer to a csv-file which contains some key-value-pairs.
 Additionally, the function gets a hash table in which the function inserts the key-value-pairs in the csv-file.
 */
-void readCSVAH(FILE* fP, sElementAH hashtableAH[MAX_ARRAY]);
+void readCSVAH(FILE* fP, sElementAH hashtableAH[MAX_ARRAY], int (*hashMethod) (int));
 
 
 
