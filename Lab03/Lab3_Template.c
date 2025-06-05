@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include "HashAHLib.h"
+#include "Lab3_HashCHLib.h"
 #define MAX_OPTIONS 4 // max currently available options for hashing 
 
 int main() {
@@ -13,6 +14,7 @@ int main() {
 	int counter=0;
 	int (*hashMethod) (int) = NULL; // pointer to the currently used hashing method
 	int hashMethod_choice = 1;  // user choice for hashing method (default 0 - mod)
+	int freeMem = 0; // flag to indicate if cleanup is needed (see outer case 2) 
 
 	//Open csv-file
 	FILE* fP = NULL;
@@ -41,6 +43,8 @@ int main() {
 		hashMethod = hash_mult;
 	} else if (hashMethod_choice == 4) {
 		hashMethod = hash_XOR;
+	} else {
+		hashMethod = hashing; // set to default for unrecognized input
 	} 
 			
 	printf("What kind of collision strategy do you prefer?\n1: Address Hashing\n2: Chained Hashing\nAny other choice: exit program\n");
@@ -50,7 +54,7 @@ int main() {
 
 	switch (choice) {
 	case 1:
-		;
+		// ;
 		//Create a hash table and initialize it
 		sElementAH hashtableAH[MAX_ARRAY];
 		for (int i = 0; i < MAX_ARRAY; i++) {
@@ -119,9 +123,21 @@ int main() {
 		} while (1);
 		break;
 	case 2:
-		//Todo: Assignment 3.2
+		//Create a hash table and initialize it
+		sElementCH hashtableCH[MAX_ARRAY];
+		for (int i = 0; i < MAX_ARRAY; i++) {
+			hashtableCH[i].next = NULL;
+			hashtableCH[i].key = -1;
+			strcpy(hashtableCH[i].value, "");
+		}
+		//Read in the key-value-pairs from the csv-file and print the hash table
+		readCSVCH(fP, hashtableCH, hashMethod); // TODO
+		printHashTableCH(hashtableCH); // TODO 
+		while (1);
 		break;
 	default:
+		// free resources in Case chained addressing was used
+		if(freeMem) freeTableCH; 
 		//Close file
 		if (fP != NULL)
 			fclose(fP);
