@@ -74,8 +74,17 @@ char* getCH(sElementCH hashtableCH[MAX_ARRAY], int (*hashMethod) (int),  int key
 	// check the main bucket if found the key return its value 
 	if(hashtableCH[i].key == key) {
 		return hashtableCH[i].value; 
-	} else {
-		return NULL; // TODO
+	} 
+	// else check the chain for the key 
+	else {
+		// usual approach, go through the chain
+		sElementCH* current = hashtableCH[i].next;
+		while(current != NULL) {
+			if(current->key == key) return current->value;
+			current = current->next;  
+		}
+		
+		return NULL; // key not found  
 	}
 	 
 }
