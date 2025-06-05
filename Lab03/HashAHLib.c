@@ -70,7 +70,7 @@ int hashing(int key) {
 /*
  Mid square hashing - squares the key and extracts the middle digits
  */
-int hash_Midsquare (int key) {
+int hash_midsquare(int key) {
 		unsigned long square = (unsigned long)key * (unsigned long)key; // square the key
 		unsigned int hash = 0;  // init hash val
 		
@@ -79,8 +79,25 @@ int hash_Midsquare (int key) {
 		return hash % MAX_ARRAY;  
 }
 
+int hash_mult(int key) {
+	// golden ratio
+	const double A = 0.6180339887; // (sqrt(5) - 1) / 2	
+	// Multiply key by A, extract fractional part, then scale by table size
+    double product = key * A;
+    double fractional = product - (int)product; // Get fractional part
+    
+    return (int)(MAX_ARRAY * fractional);
 
-
+}
+ 
+int hash_XOR(int key) {
+    // Mix bits using XOR and shifts
+    key ^= (key << 13);
+    key ^= (key >> 17);
+    key ^= (key << 5);
+    // Ensure non-negative and fit within table
+    return (key & 0x7FFFFFFF) % MAX_ARRAY; // Mask sign bit for safety
+}
 
 /**********************************************************************************************************************
 Prototypes for address hashing

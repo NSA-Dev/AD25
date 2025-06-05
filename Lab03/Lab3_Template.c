@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include "HashAHLib.h"
-#define MAX_OPTIONS 2 // max currently available options for hashing 
+#define MAX_OPTIONS 4 // max currently available options for hashing 
 
 int main() {
 	//Variables
@@ -24,6 +24,25 @@ int main() {
 
 	//Welcome and choice of collision strategy
 	printf("Welcome to our Hashing program!\n");
+	// Select hashing algorithm before proceeding
+	printf("Please, select Hashing method:\n");
+	printf("Available options:\n1: mod (default)\n2: mid square\n3: multiplication\n4: XOR shift\n");
+	hashMethod_choice = getInt();
+	// adjust function pointer to user choice  
+	if(hashMethod_choice > MAX_OPTIONS || hashMethod_choice == 0) {
+		printf("Selected option is unavailable. Reseting to default: mod\n");
+		hashMethod_choice = 1;
+		hashMethod = hashing;
+	} else if (hashMethod_choice == 1) {
+		hashMethod = hashing;
+	} else if (hashMethod_choice == 2) {
+		hashMethod = hash_midsquare;
+	} else if (hashMethod_choice == 3) {
+		hashMethod = hash_mult;
+	} else if (hashMethod_choice == 4) {
+		hashMethod = hash_XOR;
+	} 
+			
 	printf("What kind of collision strategy do you prefer?\n1: Address Hashing\n2: Chained Hashing\nAny other choice: exit program\n");
 	choice = getInt();
 	// set default hashing method
@@ -53,10 +72,15 @@ int main() {
 				break;
 			case 2:
 				printf("Hashing method -> mid square\n");
-				break; 
+				break;
+			case 3:
+				printf("Hashing method -> multiplication\n");
+				break;
+			case 4:
+				printf("Hashing method -> XOR shift\n");
+				break;
 			}
-			
-			printf("What do you like to do?\n1: Adding new element\n2: Searching for an element\n3: Delete key\n4: Switch hashing method\nAny other choice: exit program\n");
+			printf("What do you like to do?\n1: Adding new element\n2: Searching for an element\n3: Delete key\nAny other choice: exit program\n");
 			choice = getInt();
 			switch (choice) {
 				//Adding a new element to the hash table
@@ -88,19 +112,7 @@ int main() {
 				printHashTableAH(hashtableAH);
 				break;
 				// Switch hashing method 
-			case 4:
-				printf("Available options:\n1: mod (default)\n2: mid square\n");
-				hashMethod_choice = getInt(); 
-				if(hashMethod_choice > MAX_OPTIONS) {
-					printf("Selected option is unavailable. Reseting to default\n");
-					hashMethod_choice = 1;
-					hashMethod = hashing; 
-					break;
-				}
-				if(hashMethod_choice == 1) hashMethod = hashing;
-				if(hashMethod_choice == 2) hashMethod = hash_Midsquare;
-				break; 	
-				//Exit program
+
 			default:
 				return 0;
 			}

@@ -38,7 +38,9 @@ Function calculates the hash value for the passed key.
 Function return the calculated hash value.
 */
 int hashing(int key);
-int hash_Midsquare (int key);
+int hash_midsquare(int key);
+int hash_mult(int key); 
+int hash_XOR(int key);
 
 /**********************************************************************************************************************
 Prototypes for address hashing
